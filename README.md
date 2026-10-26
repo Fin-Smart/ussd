@@ -2,6 +2,14 @@
 
 A website that looks like the iOS 26 Phone app (Classic layout). Dial `*120*3762#` and press call to use FinSmart over USSD: budgets, expenses, mark as paid, income, new budgets, scam check, lessons and quizzes, alerts and settings. No AI and no network operator: every answer follows the FinSmart app's own rules, and data is saved in the browser.
 
+## Accounts
+
+The first dial offers **Create account**: first name, cellphone number and a 5-digit PIN (typed twice; repeated digits like 11111 and runs like 12345 are refused). Each account starts empty and has its own data. Like banking USSD, every dial asks for the PIN; the phone remembers the last account so only the PIN is needed. Three wrong PINs lock the account for 5 minutes.
+
+Settings > My account changes the PIN, logs out or deletes the account. Settings > Load demo data fills the account with sample budgets for demos.
+
+Accounts live in `localStorage` (`finsmart-ussd:accounts:v1`, data under `finsmart-ussd:data:<number>`). PINs are stored only as a salted, stretched SHA-256 hash. This is a simulation: anyone with the phone can clear browser storage, so don't treat it as real banking security. A forgotten PIN can't be recovered; "Forgot PIN" deletes that account from the phone so a new one can be made.
+
 ## Run
 
 ```

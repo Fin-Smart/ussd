@@ -77,7 +77,7 @@ function Guide() {
       <h1>FinSmart USSD</h1>
       <p>
         A free simulation of FinSmart over USSD. Dial <strong>{USSD_CODE}</strong> on the keypad and press the green call
-        button.
+        button, then create your account with a 5-digit PIN.
       </p>
       <h2>Shortcuts</h2>
       <ul>
@@ -93,7 +93,8 @@ function Guide() {
         <li>Type with your keyboard. Enter calls, Esc dismisses.</li>
         <li>Reply 0 to go back, 00 for the main menu, 98 for more.</li>
         <li>Use * as the decimal point, e.g. 150*50.</li>
-        <li>Your data stays in this browser.</li>
+        <li>Your PIN is asked every time you dial. 3 wrong PINs lock the account for 5 minutes.</li>
+        <li>Accounts and data stay in this browser.</li>
       </ul>
       <h2>Install</h2>
       {canInstall ? (

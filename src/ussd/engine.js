@@ -8,7 +8,10 @@
  * - end: true closes the session with `body`.
  *
  * A result is a node (opened on top) or an object combining:
- * { push, replace, reset (node or nodes after the main menu), back, home, end, notice, error }.
+ * { root, push, replace, reset (node or nodes after the main menu), back, home, end, notice, error, replay }.
+ * `root` swaps the session's home screen (e.g. the main menu once a PIN is accepted) and `replay`
+ * then sends replies on the user's behalf (a shortcut code's menu path).
+ * `keyboard` is 'numeric' (default), 'text' or 'pin' (hidden digits).
  *
  * Replies "0" (back), "00" (main menu) and "98" (next page) work on every screen.
  */
@@ -67,7 +70,8 @@ function paginate(pieces, footer) {
   });
 }
 
-export function createSession({ root, ctx, goodbye }) {
+export function createSession({ root: start, ctx, goodbye }) {
+  let root = start;
   let stack = [root];
   let page = 0;
   let notice = null;
@@ -105,6 +109,10 @@ export function createSession({ root, ctx, goodbye }) {
       stack.push(result);
       return;
     }
+    if (result.root) {
+      root = result.root;
+      stack = [root];
+    }
     if (result.back && stack.length > 1) stack.pop();
     if (result.home) stack = [root];
     if (result.reset) stack = [root, ...[result.reset].flat()];
@@ -112,6 +120,10 @@ export function createSession({ root, ctx, goodbye }) {
     if (result.push) stack.push(result.push);
     if (result.end) ended = result.end;
     if (result.notice || result.error) notice = result.notice ?? result.error;
+    for (const step of result.replay ?? []) {
+      if (ended) break;
+      reply(step);
+    }
   };
 
   const reply = (raw) => {

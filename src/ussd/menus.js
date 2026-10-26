@@ -1,3 +1,13 @@
+import {
+  changePin,
+  deleteAccount,
+  findAccount,
+  forgetDevice,
+  formatPhone,
+  PIN_LENGTH,
+  pinProblem,
+  verifyPin,
+} from '../finsmart/accounts';
 import { allocateIncome, countsAgainstIncome, INCOME_LABELS } from '../finsmart/income';
 import { findLesson, LESSONS, shuffledQuiz } from '../finsmart/lessons';
 import { CURRENCY_OPTIONS, formatMoney, parseMoney } from '../finsmart/money';
@@ -69,8 +79,9 @@ const updateBudget = (ctx, budgetId, mutate) =>
 
 export function mainMenu(ctx) {
   const alerts = computeAlerts(ctx.data).length;
+  const name = findAccount(ctx.phone)?.name;
   return {
-    body: 'Welcome to FinSmart',
+    body: name ? `FinSmart: Hi ${name}` : 'Welcome to FinSmart',
     items: [
       { label: 'My budgets', to: budgetsList },
       { label: 'Add expense', to: pickBudgetForExpense },
@@ -592,7 +603,7 @@ function incomeMenu(ctx) {
   };
 }
 
-const incomeAmount = (kind) => (ctx) => ({
+export const incomeAmount = (kind) => (ctx) => ({
   body: kind === 'monthly' ? 'Enter your monthly income after tax:' : 'Enter the total money you have:',
   onInput: (value) => {
     const cents = enterAmount(value);
@@ -607,7 +618,7 @@ const incomeAmount = (kind) => (ctx) => ({
 
 // ---------------------------------------------------------------- New budget
 
-function newBudgetName() {
+export function newBudgetName() {
   return {
     body: 'New budget\nEnter a name, e.g. Groceries:',
     keyboard: 'text',
@@ -1019,11 +1030,91 @@ function settingsMenu(ctx) {
   return {
     body: 'Settings',
     items: [
+      { label: 'My account', to: accountMenu },
       { label: `Currency: ${ctx.data.currency}`, to: currencyMenu },
-      { label: 'Restore demo data', to: resetConfirm('demo') },
-      { label: 'Start with no data', to: resetConfirm('empty') },
+      { label: 'Load demo data', to: resetConfirm('demo') },
+      { label: 'Clear my data', to: resetConfirm('empty') },
       { label: 'About FinSmart USSD', to: aboutScreen },
     ],
+  };
+}
+
+// My account
+
+function accountMenu(ctx) {
+  const account = findAccount(ctx.phone);
+  if (!account) return { body: 'Account not found.' };
+  return {
+    body: [`Name: ${account.name}`, `Number: ${formatPhone(account.phone)}`, `Member since ${formatDay(account.createdAt)}`].join('\n'),
+    items: [
+      { label: 'Change PIN', to: changePinCurrent },
+      {
+        label: 'Log out',
+        run: () => {
+          forgetDevice();
+          ctx.signOut();
+          return { end: `You are logged out. Dial ${USSD_CODE} to log in again.` };
+        },
+      },
+      { label: 'Delete account', to: deleteAccountConfirm },
+    ],
+  };
+}
+
+function changePinCurrent(ctx) {
+  return {
+    body: 'Enter your current PIN:',
+    keyboard: 'pin',
+    onInput: (value) => {
+      const result = verifyPin(ctx.phone, value);
+      if (result.ok) return { replace: changePinNew };
+      if (result.locked) {
+        ctx.signOut();
+        return { end: `Too many wrong PINs. Your account is locked for ${result.locked} minutes.` };
+      }
+      return { error: `Wrong PIN. ${result.attemptsLeft} ${result.attemptsLeft === 1 ? 'try' : 'tries'} left.` };
+    },
+  };
+}
+
+function changePinNew() {
+  return {
+    body: `Enter a new ${PIN_LENGTH}-digit PIN:`,
+    keyboard: 'pin',
+    onInput: (value) => {
+      const problem = pinProblem(value);
+      return problem ? { error: problem } : { replace: changePinConfirm(value) };
+    },
+  };
+}
+
+const changePinConfirm = (pin) => (ctx) => ({
+  body: 'Enter the new PIN again:',
+  keyboard: 'pin',
+  onInput: (value) => {
+    if (value !== pin) return { replace: changePinNew, error: "The PINs don't match. Try again." };
+    changePin(ctx.phone, pin);
+    return { back: true, notice: 'Your PIN has been changed.' };
+  },
+});
+
+function deleteAccountConfirm(ctx) {
+  return {
+    body: 'Delete your account and all its data from this phone? Enter your PIN to confirm:',
+    keyboard: 'pin',
+    onInput: (value) => {
+      const result = verifyPin(ctx.phone, value);
+      if (result.ok) {
+        deleteAccount(ctx.phone);
+        ctx.signOut();
+        return { end: `Your account has been deleted. Dial ${USSD_CODE} to create a new one.` };
+      }
+      if (result.locked) {
+        ctx.signOut();
+        return { end: `Too many wrong PINs. Your account is locked for ${result.locked} minutes.` };
+      }
+      return { error: `Wrong PIN. ${result.attemptsLeft} ${result.attemptsLeft === 1 ? 'try' : 'tries'} left.` };
+    },
   };
 }
 
@@ -1045,14 +1136,14 @@ function currencyMenu() {
 const resetConfirm = (kind) => () => ({
   body:
     kind === 'demo'
-      ? 'Replace everything with the demo budgets and income?'
-      : 'Delete all budgets, income and progress and start empty?',
+      ? 'Replace your budgets and income with sample data to explore FinSmart?'
+      : 'Delete all your budgets, income and progress? Your account stays.',
   items: [
     {
       label: 'Yes',
       run: (ctx) => {
         ctx.replace(kind === 'demo' ? demoData() : emptyData(ctx.data.currency));
-        return { end: `${kind === 'demo' ? 'Demo data restored.' : 'All data cleared.'} Dial ${USSD_CODE} to start again.` };
+        return { home: true, notice: kind === 'demo' ? 'Sample data loaded.' : 'Your data was cleared.' };
       },
     },
     { label: 'No', run: () => ({ back: true }) },
@@ -1061,6 +1152,6 @@ const resetConfirm = (kind) => () => ({
 
 function aboutScreen() {
   return {
-    body: 'FinSmart USSD is a free simulation of the FinSmart app. Your data stays in this browser. No AI is used: every answer follows FinSmart rules.',
+    body: 'FinSmart USSD is a free simulation of the FinSmart app. Your account and data stay on this phone. No AI is used: every answer follows FinSmart rules.',
   };
 }

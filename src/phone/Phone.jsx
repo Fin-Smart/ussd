@@ -3,7 +3,8 @@ import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { createStore } from '../finsmart/store';
 import { takeDialParam } from '../pwa';
 import { createSession } from '../ussd/engine';
-import { GOODBYE, mainMenu } from '../ussd/menus';
+import { startMenu } from '../ussd/authMenus';
+import { GOODBYE } from '../ussd/menus';
 import { CallScreen } from './CallScreen';
 import { KeypadScreen } from './KeypadScreen';
 import { ContactsScreen, FavouritesScreen, RecentsScreen, VoicemailScreen } from './ListScreens';
@@ -55,7 +56,10 @@ export function Phone({ framed }) {
   };
 
   const show = (view) => {
-    if (view.done) session.current = null;
+    if (view.done) {
+      session.current = null;
+      store.signOut();
+    }
     setUssd((current) => ({
       status: view.done ? 'final' : 'reply',
       text: view.text,
@@ -78,15 +82,12 @@ export function Phone({ framed }) {
         }));
         return;
       }
-      // Codes like *120*3762*1# jump straight into a menu, as real USSD services allow.
-      const created = createSession({ root: mainMenu, ctx: store, goodbye: GOODBYE });
-      let view = created.view();
-      for (const step of match[1].split('*').filter(Boolean)) {
-        if (view.done) break;
-        view = created.reply(step);
-      }
+      // Every session starts logged out. Codes like *120*3762*1# open that menu once the PIN is in.
+      store.signOut();
+      store.pendingSteps = match[1].split('*').filter(Boolean);
+      const created = createSession({ root: startMenu, ctx: store, goodbye: GOODBYE });
       session.current = created;
-      show(view);
+      show(created.view());
     }, NETWORK_DELAY_MS);
   };
 
@@ -100,6 +101,7 @@ export function Phone({ framed }) {
   const dismiss = () => {
     clearTimeout(timer.current);
     session.current = null;
+    store.signOut();
     setUssd(null);
   };
 

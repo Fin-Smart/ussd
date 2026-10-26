@@ -1,4 +1,5 @@
-const KEY = 'finsmart-ussd:data:v1';
+/** Each account's budgets, income and progress live under their own key. */
+export const dataKey = (phone) => `finsmart-ussd:data:${phone}`;
 
 /** crypto.randomUUID only exists on https and localhost, so phones testing over the LAN need a fallback. */
 export const newId = () =>
@@ -109,43 +110,59 @@ export function demoData(now = Date.now()) {
   };
 }
 
-export function loadData() {
+/** New accounts start empty; the demo data is only loaded on request from Settings. */
+function loadData(phone) {
   try {
-    const raw = localStorage.getItem(KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (parsed?.version === 1) return parsed;
-    }
+    const parsed = JSON.parse(localStorage.getItem(dataKey(phone)) ?? 'null');
+    if (parsed?.version === 1) return parsed;
   } catch {
-    // Unreadable storage falls back to the demo data.
+    // Unreadable storage starts the account empty.
   }
-  return demoData();
+  return emptyData();
 }
 
-export function saveData(data) {
+function saveData(phone, data) {
   try {
-    localStorage.setItem(KEY, JSON.stringify(data));
+    localStorage.setItem(dataKey(phone), JSON.stringify(data));
   } catch {
     // Private browsing can refuse storage; the session still works in memory.
   }
 }
 
-/** The `ctx` every USSD screen reads from: current data plus copy-on-write updates that persist. */
+/**
+ * The `ctx` every USSD screen reads from: the signed-in account's data plus copy-on-write
+ * updates that persist. `pendingSteps` holds a shortcut code's menu path until the PIN is entered.
+ */
 export function createStore() {
-  let data = loadData();
+  let phone = null;
+  let data = null;
   return {
+    pendingSteps: [],
+    get phone() {
+      return phone;
+    },
     get data() {
       return data;
     },
+    signIn(nextPhone) {
+      phone = nextPhone;
+      data = loadData(nextPhone);
+    },
+    signOut() {
+      phone = null;
+      data = null;
+    },
     update(mutate) {
+      if (!phone) return;
       const next = structuredClone(data);
       mutate(next);
       data = next;
-      saveData(data);
+      saveData(phone, data);
     },
     replace(next) {
+      if (!phone) return;
       data = next;
-      saveData(data);
+      saveData(phone, data);
     },
   };
 }

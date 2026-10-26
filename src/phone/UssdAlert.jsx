@@ -96,11 +96,11 @@ export function UssdAlert({ state, showPad, onReply, onDismiss }) {
               <p className="ussd-message">{state.text}</p>
               {replying ? (
                 <input
-                  className="ussd-input"
+                  className={`ussd-input${state.keyboard === 'pin' ? ' ussd-pin' : ''}`}
                   value={value}
                   onChange={(event) => setValue(event.target.value)}
                   autoFocus
-                  inputMode={state.keyboard === 'text' ? 'text' : 'tel'}
+                  inputMode={state.keyboard === 'text' ? 'text' : state.keyboard === 'pin' ? 'numeric' : 'tel'}
                   enterKeyHint="send"
                   autoComplete="off"
                   autoCorrect="off"

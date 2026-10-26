@@ -694,6 +694,13 @@
   -webkit-user-select: text;
 }
 
+/* Dots instead of digits, without a password field (which would offer to save the PIN). */
+.ussd-pin {
+  -webkit-text-security: disc;
+  text-security: disc;
+  letter-spacing: 4px;
+}
+
 .ussd-buttons {
   display: flex;
   gap: 10px;
