@@ -13,6 +13,23 @@ Open the printed URL. On a computer the app sits in an iPhone frame; on a phone 
 
 `npm run simulate` walks through USSD sessions in the terminal and checks every screen fits in 182 characters.
 
+## Install as an app (PWA)
+
+The service worker only runs in production builds, so test the app version with:
+
+```
+npm run build
+npm run preview -- --host
+```
+
+- Computer (Chrome or Edge): click **Install FinSmart USSD** in the side panel, or the install icon in the address bar.
+- iPhone: open the site in Safari, tap Share, then **Add to Home Screen**.
+- Android: open the site in Chrome, tap the menu, then **Install app**.
+
+Phones only install and work offline over **HTTPS** (or `localhost`), so for phones deploy `dist/` to any HTTPS host, e.g. Firebase Hosting, Netlify or Vercel. Once installed it opens full screen and works offline. Long-press the icon for shortcuts to My budgets, Add expense and Scam check.
+
+After a new deploy, the next launch picks up the update. If you change `public/sw.js`, bump the `v2` cache name in it.
+
 ## Codes
 
 | Code | Opens |

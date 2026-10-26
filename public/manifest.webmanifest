@@ -1,0 +1,24 @@
+{
+  "id": "./",
+  "name": "FinSmart USSD",
+  "short_name": "FinSmart USSD",
+  "description": "FinSmart over USSD: budgets, expenses, scam checks and money lessons in an iPhone Phone app simulation. Dial *120*3762#.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "categories": ["finance", "education"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "My budgets", "url": "./?dial=*120*3762*1%23", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Add expense", "url": "./?dial=*120*3762*2%23", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Scam check", "url": "./?dial=*120*3762*5%23", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

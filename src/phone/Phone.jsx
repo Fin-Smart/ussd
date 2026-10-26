@@ -1,6 +1,7 @@
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 
 import { createStore } from '../finsmart/store';
+import { takeDialParam } from '../pwa';
 import { createSession } from '../ussd/engine';
 import { GOODBYE, mainMenu } from '../ussd/menus';
 import { CallScreen } from './CallScreen';
@@ -18,12 +19,20 @@ const REPLY_DELAY_MS = 650;
 const FLASH_MS = 120;
 const DIAL_CHARS = /^[0-9*#+]$/;
 
+const SHORTCUT_DELAY_MS = 400;
+
 const isUssd = (value) => /^[*#]/.test(value) && value.endsWith('#');
+
+/** A code from a home screen shortcut, shown on the keypad and dialled right after launch. */
+const SHORTCUT_CODE = (() => {
+  const code = takeDialParam();
+  return code && /^[0-9*#+]+$/.test(code) ? code : null;
+})();
 
 export function Phone({ framed }) {
   const [store] = useState(createStore);
   const [tab, setTab] = useState('keypad');
-  const [digits, setDigits] = useState('');
+  const [digits, setDigits] = useState(SHORTCUT_CODE ?? '');
   const [flashKey, setFlashKey] = useState(null);
   const [recents, setRecents] = useState(loadRecents);
   const [ussd, setUssd] = useState(null);
@@ -145,6 +154,14 @@ export function Phone({ framed }) {
     const pasted = (event.clipboardData?.getData('text') ?? '').replace(/[^0-9*#+]/g, '');
     if (pasted) setDigits((current) => (current + pasted).slice(0, 40));
   });
+
+  const dialShortcut = useEffectEvent(() => dial(SHORTCUT_CODE));
+
+  useEffect(() => {
+    if (!SHORTCUT_CODE) return;
+    const shortcutTimer = setTimeout(dialShortcut, SHORTCUT_DELAY_MS);
+    return () => clearTimeout(shortcutTimer);
+  }, []);
 
   useEffect(() => {
     window.addEventListener('keydown', onKeyDown);

@@ -68,8 +68,12 @@
   background: linear-gradient(270deg, #6c6c71, #a5a5ab);
 }
 
-/* Real phones: no frame, the Phone app fills the screen. */
+/* Real phones: no frame and no rounded corners, the Phone app fills the screen. Fixed so
+   Safari can't rubber-band scroll the page. */
 .stage-full {
+  position: fixed;
+  inset: 0;
+  height: auto;
   padding: 0;
   background: none;
 }
@@ -141,6 +145,27 @@
   margin-left: 18px;
   list-style: disc;
   padding: 3px 0;
+}
+
+.install-button {
+  margin-bottom: 10px;
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 20px;
+  background: #0088ff;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.install-button:hover {
+  filter: brightness(1.08);
+}
+
+.guide .install-note {
+  font-size: 13px;
+  color: #8e8e93;
 }
 
 @media (max-width: 1000px) {

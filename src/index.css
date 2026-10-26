@@ -11,6 +11,11 @@ body,
   margin: 0;
 }
 
+html,
+body {
+  overscroll-behavior: none;
+}
+
 body {
   overflow: hidden;
   background: #e9ebf0;

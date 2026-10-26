@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react';
 
 import { Phone } from './phone/Phone';
+import { promptInstall, useCanInstall } from './pwa';
 import { USSD_CODE } from './ussd/menus';
 import './App.css';
 import './phone/phone.css';
@@ -9,13 +10,29 @@ const DEVICE_WIDTH = 421;
 const DEVICE_HEIGHT = 880;
 const MARGIN = 40;
 
+const TOUCH_DEVICE = '(pointer: coarse)';
+const INSTALLED = '(display-mode: standalone)';
+
 function subscribeResize(onChange) {
   window.addEventListener('resize', onChange);
-  return () => window.removeEventListener('resize', onChange);
+  const queries = [TOUCH_DEVICE, INSTALLED].map((query) => window.matchMedia(query));
+  queries.forEach((query) => query.addEventListener('change', onChange));
+  return () => {
+    window.removeEventListener('resize', onChange);
+    queries.forEach((query) => query.removeEventListener('change', onChange));
+  };
 }
 
-/** Real phones get the Phone app full screen; bigger screens get it inside an iPhone frame. */
-const isFramed = () => window.innerWidth >= 560 && window.innerHeight >= 520;
+/**
+ * The iPhone frame is only for showing the app on a computer. On a real phone (touch screen) or
+ * when installed to the home screen, the Phone app fills the screen at any size or rotation.
+ */
+const isFramed = () =>
+  !window.matchMedia(TOUCH_DEVICE).matches &&
+  !window.matchMedia(INSTALLED).matches &&
+  window.navigator.standalone !== true &&
+  window.innerWidth >= 560 &&
+  window.innerHeight >= 520;
 const deviceScale = () =>
   Math.min(1, (window.innerHeight - MARGIN) / DEVICE_HEIGHT, (window.innerWidth - MARGIN) / DEVICE_WIDTH);
 
@@ -54,6 +71,7 @@ export default function App() {
 }
 
 function Guide() {
+  const canInstall = useCanInstall();
   return (
     <aside className="guide">
       <h1>FinSmart USSD</h1>
@@ -77,6 +95,16 @@ function Guide() {
         <li>Use * as the decimal point, e.g. 150*50.</li>
         <li>Your data stays in this browser.</li>
       </ul>
+      <h2>Install</h2>
+      {canInstall ? (
+        <button type="button" className="install-button" onClick={promptInstall}>
+          Install FinSmart USSD
+        </button>
+      ) : null}
+      <p className="install-note">
+        On iPhone open this page in Safari, tap Share, then Add to Home Screen. On Android tap the menu, then Install
+        app. It works offline once installed.
+      </p>
     </aside>
   );
 }
