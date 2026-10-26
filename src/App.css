@@ -1,0 +1,165 @@
+.stage {
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 56px;
+  padding: 20px;
+  background: radial-gradient(1200px 700px at 30% 20%, #ffffff 0%, #e9ebf0 55%, #dcdfe6 100%);
+}
+
+/* iPhone 17 Pro-style frame: 393x852 pt screen inside a titanium band. */
+.device {
+  position: relative;
+  flex-shrink: 0;
+  width: 421px;
+  height: 880px;
+  padding: 14px;
+  border-radius: 70px;
+  background: #050506;
+  box-shadow:
+    inset 0 0 0 1.5px #3a3a3d,
+    0 0 0 2.5px #9a9aa0,
+    0 0 0 4px #6c6c71,
+    0 50px 90px -30px rgba(0, 0, 0, 0.45),
+    0 18px 40px -20px rgba(0, 0, 0, 0.35);
+  transform: scale(var(--scale, 1));
+  transform-origin: center;
+}
+
+.device-screen {
+  position: relative;
+  width: 393px;
+  height: 852px;
+  overflow: hidden;
+  border-radius: 56px;
+  isolation: isolate;
+}
+
+.device-button {
+  position: absolute;
+  width: 5px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #6c6c71, #a5a5ab);
+}
+
+.device-button.action {
+  left: -8px;
+  top: 172px;
+  height: 34px;
+}
+
+.device-button.volume-up {
+  left: -8px;
+  top: 236px;
+  height: 64px;
+}
+
+.device-button.volume-down {
+  left: -8px;
+  top: 314px;
+  height: 64px;
+}
+
+.device-button.power {
+  right: -8px;
+  top: 262px;
+  height: 104px;
+  background: linear-gradient(270deg, #6c6c71, #a5a5ab);
+}
+
+/* Real phones: no frame, the Phone app fills the screen. */
+.stage-full {
+  padding: 0;
+  background: none;
+}
+
+.stage-full .device {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  transform: none;
+}
+
+.stage-full .device-screen {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+.guide {
+  max-width: 300px;
+  color: #3a3a3c;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.guide h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  letter-spacing: -0.4px;
+  color: #000;
+}
+
+.guide h2 {
+  margin: 22px 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #8e8e93;
+}
+
+.guide p {
+  margin: 0;
+}
+
+.guide ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guide li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 0;
+}
+
+.guide code {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 14px;
+  color: #000;
+}
+
+.guide .tips li {
+  display: list-item;
+  margin-left: 18px;
+  list-style: disc;
+  padding: 3px 0;
+}
+
+@media (max-width: 1000px) {
+  .guide {
+    display: none;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .stage {
+    background: radial-gradient(1200px 700px at 30% 20%, #2a2b30 0%, #16171a 60%, #0c0c0e 100%);
+  }
+
+  .guide {
+    color: #c7c7cc;
+  }
+
+  .guide h1,
+  .guide code {
+    color: #fff;
+  }
+}

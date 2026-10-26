@@ -1,0 +1,847 @@
+/* iOS 26 Phone app, Classic layout. Sizes are in iPhone points (393 x 852). */
+
+.phone {
+  --bg: #ffffff;
+  --label: #000000;
+  --secondary: rgba(60, 60, 67, 0.6);
+  --tertiary: rgba(60, 60, 67, 0.3);
+  --separator: rgba(60, 60, 67, 0.2);
+  --blue: #0088ff;
+  --green: #34c759;
+  --red: #ff3b30;
+  --key: #e3e3e8;
+  --key-pressed: #b9b9be;
+  --delete: #c7c7cc;
+  --glass: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.9);
+  --glass-shadow: rgba(0, 0, 0, 0.12);
+  --tab-active: rgba(0, 0, 0, 0.06);
+  --alert-bg: rgba(250, 250, 250, 0.86);
+  --alert-button: rgba(120, 120, 128, 0.16);
+  --field: rgba(118, 118, 128, 0.12);
+  --kb-bg: rgba(206, 209, 216, 0.96);
+  --kb-key: #ffffff;
+  --kb-shadow: rgba(0, 0, 0, 0.28);
+  --avatar: linear-gradient(180deg, #a6abb8 0%, #858a96 100%);
+  --top-inset: 54px;
+  --tab-bottom: 25px;
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--label);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', Inter, system-ui, 'Segoe UI', sans-serif;
+  letter-spacing: -0.2px;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.phone.fullscreen {
+  --top-inset: env(safe-area-inset-top, 0px);
+  --tab-bottom: max(calc(env(safe-area-inset-bottom, 0px) - 6px), 12px);
+}
+
+.phone button {
+  cursor: pointer;
+  color: inherit;
+}
+
+@media (prefers-color-scheme: dark) {
+  .phone {
+    --bg: #000000;
+    --label: #ffffff;
+    --secondary: rgba(235, 235, 245, 0.6);
+    --tertiary: rgba(235, 235, 245, 0.3);
+    --separator: rgba(84, 84, 88, 0.6);
+    --blue: #0091ff;
+    --green: #30d158;
+    --red: #ff453a;
+    --key: #333335;
+    --key-pressed: #737377;
+    --delete: #636366;
+    --glass: rgba(36, 36, 38, 0.66);
+    --glass-border: rgba(255, 255, 255, 0.14);
+    --glass-shadow: rgba(0, 0, 0, 0.5);
+    --tab-active: rgba(255, 255, 255, 0.12);
+    --alert-bg: rgba(40, 40, 42, 0.86);
+    --alert-button: rgba(120, 120, 128, 0.32);
+    --field: rgba(118, 118, 128, 0.24);
+    --kb-bg: rgba(43, 43, 45, 0.96);
+    --kb-key: #6b6b6e;
+    --kb-shadow: rgba(0, 0, 0, 0.6);
+    --avatar: linear-gradient(180deg, #8e939f 0%, #6b707b 100%);
+  }
+}
+
+/* ---------------------------------------------------------------- Chrome */
+
+.dynamic-island {
+  position: absolute;
+  top: 11px;
+  left: 50%;
+  z-index: 70;
+  width: 126px;
+  height: 37px;
+  border-radius: 20px;
+  background: #000;
+  transform: translateX(-50%);
+}
+
+.status-bar {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 65;
+  display: flex;
+  justify-content: space-between;
+  height: 54px;
+  padding-top: 3px;
+  pointer-events: none;
+}
+
+.status-bar-light {
+  color: #fff;
+}
+
+.status-side {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 133px;
+}
+
+.status-time {
+  padding-left: 14px;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+}
+
+.status-icons {
+  gap: 6px;
+  padding-right: 14px;
+}
+
+.home-indicator {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  z-index: 80;
+  width: 139px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--label);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.home-indicator.light {
+  background: #fff;
+}
+
+.phone-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--top-inset);
+}
+
+/* ---------------------------------------------------------------- Keypad */
+
+.keypad-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: calc(var(--tab-bottom) + 92px);
+}
+
+.dial-display {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  min-height: 110px;
+  padding: 0 20px 26px;
+}
+
+.dial-number {
+  height: 50px;
+  line-height: 50px;
+  white-space: nowrap;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', Inter, system-ui, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.6px;
+}
+
+.dial-xl {
+  font-size: 40px;
+}
+
+.dial-lg {
+  font-size: 34px;
+}
+
+.dial-md {
+  font-size: 28px;
+}
+
+.add-number {
+  height: 22px;
+  margin-top: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 17px;
+  color: var(--blue) !important;
+}
+
+.keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 78px);
+  column-gap: 26px;
+  row-gap: 15px;
+}
+
+.key {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 78px;
+  height: 78px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--key);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', Inter, system-ui, sans-serif;
+  transition: background-color 0.35s ease-out;
+}
+
+.key:active,
+.key.pressed {
+  background: var(--key-pressed);
+  transition: none;
+}
+
+.key-digit {
+  margin-top: -1px;
+  font-size: 37px;
+  font-weight: 400;
+  line-height: 40px;
+  letter-spacing: 0;
+}
+
+.key-letters {
+  height: 12px;
+  margin-top: -1px;
+  padding-left: 2px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 2.2px;
+}
+
+.key-letters.key-plus {
+  padding-left: 0;
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.key-star .key-digit {
+  margin-top: 14px;
+  font-size: 52px;
+  line-height: 40px;
+}
+
+.key-hash .key-digit {
+  font-size: 35px;
+}
+
+.keypad-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 78px);
+  column-gap: 26px;
+  align-items: center;
+  justify-items: center;
+  margin-top: 15px;
+}
+
+.call-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 78px;
+  height: 78px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--green);
+  color: #fff !important;
+  transition: filter 0.3s ease-out;
+}
+
+.call-button:active {
+  filter: brightness(1.25);
+  transition: none;
+}
+
+.delete-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 78px;
+  height: 78px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--delete) !important;
+}
+
+.delete-button:active {
+  opacity: 0.6;
+}
+
+/* ---------------------------------------------------------------- Tab bar */
+
+.tab-bar {
+  position: absolute;
+  left: 21px;
+  right: 21px;
+  bottom: var(--tab-bottom);
+  z-index: 30;
+  display: flex;
+  height: 62px;
+  padding: 4px;
+  border-radius: 31px;
+  background: var(--glass);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  box-shadow:
+    0 10px 36px var(--glass-shadow),
+    inset 0 0 0 0.6px var(--glass-border),
+    0 0 0 0.5px rgba(0, 0, 0, 0.05);
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 27px;
+  background: none;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0;
+  transition: background-color 0.25s;
+}
+
+.tab.active {
+  background: var(--tab-active);
+  color: var(--blue) !important;
+}
+
+/* ---------------------------------------------------------------- Lists */
+
+.list-screen {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: calc(var(--tab-bottom) + 90px);
+  scrollbar-width: none;
+}
+
+.list-screen::-webkit-scrollbar {
+  display: none;
+}
+
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 54px;
+  padding: 0 16px;
+}
+
+.glass-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 22px;
+  background: var(--glass);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow:
+    0 4px 16px var(--glass-shadow),
+    inset 0 0 0 0.6px var(--glass-border);
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.segmented {
+  display: flex;
+  padding: 3px;
+  border-radius: 22px;
+  background: var(--glass);
+  box-shadow:
+    0 4px 16px var(--glass-shadow),
+    inset 0 0 0 0.6px var(--glass-border);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.segment {
+  padding: 9px 16px;
+  border-radius: 19px;
+}
+
+.segment.active {
+  background: var(--tab-active);
+}
+
+.large-title {
+  margin: 0;
+  padding: 2px 16px 10px;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 64px;
+  padding: 0 16px;
+  border: 0;
+  background: none;
+  text-align: left;
+}
+
+.list-row.compact {
+  min-height: 56px;
+}
+
+.list-row:active {
+  background: var(--field);
+}
+
+.list-row::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 68px;
+  height: 0.5px;
+  background: var(--separator);
+  content: '';
+}
+
+.list-row.compact::after {
+  left: 16px;
+}
+
+.row-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.row-title {
+  overflow: hidden;
+  font-size: 17px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row-subtitle {
+  margin-top: 1px;
+  font-size: 15px;
+  color: var(--secondary);
+}
+
+.row-time {
+  font-size: 15px;
+  color: var(--secondary);
+}
+
+.row-info {
+  flex-shrink: 0;
+  color: var(--blue);
+}
+
+.avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--avatar);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.avatar-large {
+  width: 60px;
+  height: 60px;
+  font-size: 22px;
+}
+
+.search-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  margin: 0 16px 14px;
+  padding: 0 10px;
+  border-radius: 19px;
+  background: var(--field);
+  color: var(--secondary);
+  font-size: 17px;
+}
+
+.my-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 4px 16px 14px;
+  border-bottom: 0.5px solid var(--separator);
+}
+
+.my-card-name {
+  font-size: 20px;
+}
+
+.section-letter {
+  padding: 10px 16px 2px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--secondary);
+}
+
+.empty-state {
+  padding-top: 140px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--secondary);
+}
+
+.empty-state.tall {
+  padding-top: 200px;
+}
+
+/* ---------------------------------------------------------------- Call */
+
+.call-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: calc(var(--top-inset) + 64px);
+  background: linear-gradient(180deg, #56626e 0%, #2f3842 55%, #1a2027 100%);
+  color: #fff;
+  animation: call-in 0.35s ease-out;
+}
+
+.call-top {
+  text-align: center;
+}
+
+.call-name {
+  font-size: 34px;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+
+.call-status {
+  margin-top: 6px;
+  font-size: 17px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.call-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 78px);
+  gap: 22px 30px;
+  margin-top: auto;
+  margin-bottom: calc(var(--tab-bottom) + 50px);
+}
+
+.call-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.call-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 78px;
+  height: 78px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: #fff !important;
+}
+
+.call-btn.call-end {
+  background: var(--red);
+}
+
+.call-btn.call-end svg {
+  transform: rotate(135deg);
+}
+
+/* ---------------------------------------------------------------- USSD alert */
+
+.ussd-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.2);
+  animation: fade-in 0.2s ease-out;
+}
+
+.ussd-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: calc(var(--top-inset) + 8px) 0 16px;
+}
+
+.ussd-alert {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  max-height: 100%;
+  padding: 22px 18px 16px;
+  border-radius: 34px;
+  background: var(--alert-bg);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+  animation: alert-in 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.15);
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.ussd-alert form {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 4px;
+}
+
+.ussd-title {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.ussd-message {
+  margin: 0;
+  font-size: 15px;
+  line-height: 20px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.ussd-input {
+  width: 100%;
+  height: 40px;
+  margin-top: 14px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 12px;
+  outline: none;
+  background: var(--field);
+  color: var(--label);
+  font-size: 17px;
+  caret-color: var(--blue);
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.ussd-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.ussd-buttons button {
+  flex: 1;
+  height: 48px;
+  border: 0;
+  border-radius: 24px;
+  background: var(--alert-button);
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.ussd-buttons button:active {
+  filter: brightness(0.9);
+}
+
+.ussd-buttons button.primary {
+  background: var(--blue);
+  color: #fff !important;
+}
+
+.ussd-buttons button.primary:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.ussd-running {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0 4px;
+  text-align: center;
+}
+
+.ussd-running p {
+  margin: 0;
+  font-size: 15px;
+  color: var(--secondary);
+}
+
+.spinner {
+  width: 30px;
+  height: 30px;
+  color: var(--secondary);
+  animation: spin 0.8s steps(8) infinite;
+}
+
+/* ---------------------------------------------------------------- Phone-pad keyboard */
+
+.phone-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px 6px;
+  padding: 7px 6px 40px;
+  background: var(--kb-bg);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  animation: pad-in 0.25s ease-out;
+}
+
+.pad-key {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 47px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: var(--kb-key);
+  box-shadow: 0 1px 0 var(--kb-shadow);
+}
+
+.pad-key:active {
+  filter: brightness(0.85);
+}
+
+.pad-key.pad-plain {
+  background: transparent;
+  box-shadow: none;
+}
+
+.pad-digit {
+  font-size: 25px;
+  line-height: 27px;
+}
+
+.pad-letters {
+  min-height: 11px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 11px;
+  letter-spacing: 1.8px;
+}
+
+.pad-symbols {
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+/* ---------------------------------------------------------------- Motion */
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes alert-in {
+  from {
+    opacity: 0;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes pad-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes call-in {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ussd-layer,
+  .ussd-alert,
+  .phone-pad,
+  .call-screen {
+    animation: none;
+  }
+}
